@@ -18,15 +18,13 @@ metadata:
     {{- include "unifi.labels" . | nindent 4 }}
   annotations:
     # UniFi uses HTTPS on backend port 8443 with self-signed certificates
-    {{- if or (contains "nginx" (.Values.ingress.className | lower)) (hasKey .Values.ingress.annotations "kubernetes.io/ingress.class") }}
+    {{- if contains "nginx" (.Values.ingress.className | lower) }}
     # NGINX Ingress Controller annotations
     nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
     {{- else if contains "traefik" (.Values.ingress.className | lower) }}
     # Traefik annotations
     traefik.ingress.kubernetes.io/router.entrypoints: websecure
     traefik.ingress.kubernetes.io/router.tls: "true"
-    traefik.ingress.kubernetes.io/service.serversscheme: https
-    traefik.ingress.kubernetes.io/service.serverstransport: unifi-transport
     {{- else if or (contains "alb" (.Values.ingress.className | lower)) (contains "aws-load-balancer" (.Values.ingress.className | lower)) }}
     # AWS Load Balancer Controller annotations
     alb.ingress.kubernetes.io/backend-protocol: HTTPS
